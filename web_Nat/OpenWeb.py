@@ -1,0 +1,12 @@
+# coding=gbk
+import time
+import webbrowser
+
+
+def connect(url):
+    webbrowser.open(url)
+    time.sleep(3)
+    # ¹Ø±Õ¹È¸èä¯ÀÀÆ÷£¬
+    # os.system('taskkill /IM chrome.exe')
+
+# connect("www.baidu.com")
