@@ -31,5 +31,11 @@ urlpatterns = [
     # url(r'^static$',views.static),
     #  url(r'^getInfo/$', getInfo)
      url(r'^static1/$', static1),
-     url(r'^static_test/$', static_test)
+     url(r'^static_test/$', static_test),
+     url(r'^dynamic/$', dynamic),
+     url(r'^dynamic_test/$', dynamic_test),
+     url(r'^balance/$', balance),
+     url(r'^balance_test/$', balance_test),
+     url(r'^reuse/$', reuse),
+     url(r'^reuse_test/$', reuse_test),
 ]

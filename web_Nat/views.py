@@ -42,6 +42,7 @@ reuse_command = ['enable', 'CISCO','configure terminal',
                      'access-list 3 permit host 220.110.0.61',
                      'ip nat inside source list 3 pool natpool overload']
 test_command = ['end','show ip nat tr']
+static_test_command = ['ping 10.0.0.10']
 
 rta_client =RTA.TelnetClient()
 rtb_client =RTB.TelnetClient()
@@ -60,9 +61,12 @@ def dynamic(request):
     """
     if rta_client.login_host(host_ip_rta,username,password):
         dynamic_result=rta_client.execute_command(dynamic_command)
-        return render(request,"index.html",dynamic_result)
+        message = {"msg": dynamic_result}
+        return JsonResponse(message)
     else:
-        return render(request,"index.html","Dynamic Error!")
+        message = {"msg": "Dynamic Error!"}
+        return JsonResponse(message)
+
 
 def dynamic_test(request):
     """
@@ -72,9 +76,11 @@ def dynamic_test(request):
     """
     if rta_client.login_host(host_ip_rta,username,password):
         ping_result=Ping.ping("192.168.1.10")
-        return render(request,"index.html",ping_result)
+        message = {"msg": ping_result}
+        return JsonResponse(message)
     else:
-        return render(request,"index.html","Dynamic Test Error!")
+        message = {"msg": "Dynamic Test Error!"}
+        return JsonResponse(message)
 
 def balance(request):
     """
@@ -84,9 +90,12 @@ def balance(request):
     """
     if rta_client.login_host(host_ip_rta, username, password):
         balance_result = rta_client.execute_command(balance_command)
-        return render(request,"index.html",balance_result)
+        message = {"msg": balance_result}
+        return JsonResponse(message)
     else:
-        return render(request, "index.html", "Balance Error!")
+        message = {"msg": "Balance Error!"}
+        return JsonResponse(message)
+
 
 def balance_test(request):
     """
@@ -97,9 +106,11 @@ def balance_test(request):
     if rta_client.login_host(host_ip_rta, username, password):
         web.connect("220.110.0.60")
         test_result = rta_client.execute_command(test_command)
-        return render(request,"index.html",test_result)
+        message = {"msg": test_result}
+        return JsonResponse(message)
     else:
-        return render(request, "index.html", "Balance Test Error!")
+        message = {"msg": "Balance Test Error!"}
+        return JsonResponse(message)
 
 def reuse(request):
     """
@@ -109,9 +120,12 @@ def reuse(request):
     """
     if rta_client.login_host(host_ip_rta, username, password):
         reuse_result = rta_client.execute_command(reuse_command)
-        return render(request,"index.html",reuse_result)
+        message = {"msg": reuse_result}
+        return JsonResponse(message)
     else:
-        return render(request, "index.html", "Reuse Error!")
+        message = {"msg": "Reuse Error!"}
+        return JsonResponse(message)
+
 
 def reuse_test(request):
     """
@@ -122,10 +136,12 @@ def reuse_test(request):
     if rta_client.login_host(host_ip_rta, username, password):
         web.connect("220.110.0.61")
         test_result = rta_client.execute_command(test_command)
-        rta_client.logout_host()  # rta青结
-        return render(request,"index.html",test_result)
+        message = {"msg": test_result}
+        return JsonResponse(message)
     else:
-        return render(request, "index.html", "Reuse Test Error!")
+        message = {"msg": "Reuse test error"}
+        return JsonResponse(message)
+
 
 def static1(request):
     """
@@ -136,8 +152,8 @@ def static1(request):
     print("到此一游")
     if rtb_client.login_host(host_ip_rtb,username,password):
         static_result = rtb_client.execute_command(static_command)
+        print(static_result)
         message={"msg":static_result}
-
         return JsonResponse(message)
     else:
         message = {"msg": "Static Error!"}
@@ -149,9 +165,10 @@ def static_test(request):
     :param request:
     :return: 测试结果（字符串）
     """
-    if rtb_client.login_host(host_ip_rtb,username,password):
-        ping_result = Ping.ping("220.110.0.34")
-        rtb_client.logout_host()  # rtb青结
+    if rta_client.login_host(host_ip_rtb,username,password):
+        ping_result = rta_client.execute_command(static_test_command)
+        print(ping_result)
+        rta_client.logout_host()  # rtb青结
         message = {"msg": ping_result}
         return JsonResponse(message)
     else:

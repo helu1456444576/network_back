@@ -6,17 +6,11 @@ from web_Nat import OpenWeb as web
 
 
 class TelnetClient():
-
-
     def __init__(self, ):
         self.tn = telnetlib.Telnet()
-        self.login=False
-
 
     # 此函数实现telnet登录主机
     def login_host(self, host_ip, username, password):
-        if self.login:
-            return True # 已登录则直接返回
         try:
             # self.tn = telnetlib.Telnet(host_ip,port=23)
             self.tn.open(host_ip, port=23)
@@ -26,18 +20,17 @@ class TelnetClient():
         # 等待login出现后输入用户名，最多等待10秒
         self.tn.read_until(b'login: ', timeout=10)
         self.tn.write(username.encode('ascii') + b'\n')
-        # 获取登录结果
         # 等待Password出现后输入用户名，最多等待10秒
         self.tn.read_until(b'Password: ', timeout=10)
         self.tn.write(password.encode('ascii') + b'\n')
         # 延时两秒再收取返回结果，给服务端足够响应时间
-        time.sleep(2)
+        time.sleep(1)
+        # 获取登录结果
         # read_very_eager()获取到的是的是上次获取之后本次获取之前的所有输出
         command_result = self.tn.read_very_eager().decode('ascii')
         if 'Login incorrect' not in command_result:
             # logging.warning('%s登录成功' % host_ip)
             print(host_ip + "登陆成功")
-            self.login=True
             return True
         else:
             # logging.warning('%s登录失败，用户名或密码错误' % host_ip)
@@ -50,17 +43,13 @@ class TelnetClient():
         for i in range(len(command)):
             # 执行命令
             self.tn.write(command[i].encode('ascii') + b'\n')
-            time.sleep(3)
+            time.sleep(1)
             # 获取命令结果
             command_result = self.tn.read_very_eager().decode('ascii')
-            # print(command_result)
+            print(command_result)
             # logging.warning('命令执行结果：\n%s' % command_result)
-            result += command[i] + command_result
+            result += command_result
         return result
-
-    def homework(self):
-
-        pass
 
     # 退出telnet
     def logout_host(self):
@@ -71,7 +60,6 @@ if __name__ == '__main__':
     host_ip = '220.110.0.2'
     username = 'HEY'
     password = 'CISCO'
-    #rta是动态的，rtb是静态的
     homework_command = ['enable', 'CISCO',
                         'configure terminal',
                         'ip route 0.0.0.0 0.0.0.0 s0/0/0',
@@ -83,7 +71,7 @@ if __name__ == '__main__':
                         'exit',
                         'access-list 1 permit 192.168.1.0 0.0.0.255',
                         'ip nat pool globalXYZ 220.110.0.33 220.110.0.57 netmask 255.255.255.0',
-                        'ip nat inside source list 1 pool globalXYZ overload']
+                        'ip nat inside source list 1 pool globalXYZ overload',]
     balance_command = ['no ip nat inside source list 1 pool globalXYZ overload',
                        'ip http server',
                        'ip nat pool tcppool 192.168.1.1 192.168.1.2 netmask 225.255.255.0 type rotary',
@@ -101,11 +89,14 @@ if __name__ == '__main__':
     if telnet_client.login_host(host_ip, username, password):
         print("telnet success")
         homework_command_result = telnet_client.execute_command(homework_command)
-        ping_result = Ping.ping("192.168.1.10")
-        balance_command_result = telnet_client.execute_command(balance_command)
-        web.connect("220.110.0.60")
-        test_command_result = telnet_client.execute_command(test_command)
-        reuse_command_result = telnet_client.execute_command(reuse_command)
-        web.connect("220.110.0.61")
-        test_command_result2 = telnet_client.execute_command(test_command)
-        telnet_client.logout_host()
+        print("jlkjflsadkjflksadjflksajdflkajsdflksjflaksjd")
+        print(homework_command_result)
+
+        # ping_result = Ping.ping("192.168.1.10")
+        # balance_command_result = telnet_client.execute_command(balance_command)
+        # web.connect("220.110.0.60")
+        # test_command_result = telnet_client.execute_command(test_command)
+        # reuse_command_result = telnet_client.execute_command(reuse_command)
+        # web.connect("220.110.0.61")
+        # test_command_result2 = telnet_client.execute_command(test_command)
+        # telnet_client.logout_host()
